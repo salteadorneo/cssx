@@ -1,0 +1,26 @@
+{
+  "name": "cssx",
+  "version": "0.0.1",
+  "description": "Compile CSS as a programming language",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch-path=./src index.js",
+    "preview": "servor ./dist --reload",
+    "build": "node index.js"
+  },
+  "keywords": [
+    "cssx",
+    "programming",
+    "language",
+    "css"
+  ],
+  "author": "salteadorneo",
+  "license": "ISC",
+  "devDependencies": {
+    "servor": "^4.0.2",
+    "standard": "^17.1.0"
+  },
+  "eslintConfig": {
+    "extends": "standard"
+  }
+}

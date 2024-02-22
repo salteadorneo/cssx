@@ -1,0 +1,43 @@
+:root {
+    --title: "Test";
+}
+
+body {
+    display: grid;
+    place-content: center;
+    gap: 10px;
+    height: 100dvh;
+    font-family: system-ui, sans-serif;
+    text-align: center;
+}
+
+a {
+    content: "About";
+    touch-action: "about.html";
+}
+
+script {
+    src: "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js";
+}
+
+img {
+    src: "https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg";
+    max-height: 80px;
+    margin: 0 auto;
+}
+
+h1 {
+    content: "Programming language?";
+    font-size: 1.8rem;
+}
+
+button {
+    content: "Click me";
+    padding: 10px;
+    border-radius: 8px;
+    touch-action: "confetti()";
+}
+
+p {
+    content: "Page generated with CSSX";
+}
