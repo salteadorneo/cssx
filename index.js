@@ -1,32 +1,36 @@
-const fs = require('fs')
-const path = require('path')
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
+import { join, extname, basename, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
-const { version } = require('./package.json')
+const packageJSON = JSON.parse(readFileSync('./package.json'))
+const { version } = packageJSON
 
 const DEFAULT_VARS = { lang: 'en', title: 'CSSX', description: 'Site generated with CSSX', generator: `CSSX v${version}` }
 
-const currentDirectory = path.join(__dirname, 'src')
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+const currentDirectory = join(__dirname, 'src')
 
 // if (fs.existsSync(path.join(__dirname, 'dist'))) {
 //   fs.rmdirSync(path.join(__dirname, 'dist'), { recursive: true });
 // }
-if (!fs.existsSync(path.join(__dirname, 'dist'))) {
-  fs.mkdirSync(path.join(__dirname, 'dist'))
+if (!existsSync(join(__dirname, 'dist'))) {
+  mkdirSync(join(__dirname, 'dist'))
 }
 
-fs.readdirSync(currentDirectory).forEach((file) => {
-  if (path.extname(file) === '.cssx') {
-    const inputFile = path.join(currentDirectory, file)
-    const name = path.basename(file, '.cssx')
-    const outputFile = path.join(__dirname, 'dist', `${name}.html`)
+readdirSync(currentDirectory).forEach((file) => {
+  if (extname(file) === '.cssx') {
+    const inputFile = join(currentDirectory, file)
+    const name = basename(file, '.cssx')
+    const outputFile = join(__dirname, 'dist', `${name}.html`)
     generateHtmlFromCssx(inputFile, outputFile)
   }
 })
 
-function generateHtmlFromCssx (inputFile, outputFile) {
-  const filename = path.basename(inputFile, '.cssx')
+export function generateHtmlFromCssx (inputFile, outputFile) {
+  const filename = basename(inputFile, '.cssx')
 
-  const content = fs.readFileSync(inputFile, 'utf8')
+  const content = readFileSync(inputFile, 'utf8')
   const { vars, components } = processCssx(content)
 
   if (components.length === 0) {
@@ -46,26 +50,28 @@ function generateHtmlFromCssx (inputFile, outputFile) {
 
   const body = components
     .map((component) => {
-      if (component.contentValue === '') return null
-      const classAttribute = component.hash
-        ? ` class="cssx-${component.hash}"`
+      const { hash, selector, contentValue, touchAction } = component
+
+      if (contentValue === '') return null
+
+      const classAttribute = hash
+        ? ` class="cssx-${hash}"`
         : ''
-      const touchAction = component.touchAction
-        ? (component.selector === 'a' ? ` href="${component.touchAction}"` : ` onclick="${component.touchAction}"`)
+      const actionAttribute = touchAction
+        ? (selector === 'a' ? ` href="${touchAction}"` : ` onclick="${touchAction}"`)
         : ''
-      if (component.selector === 'script') {
-        return `<${component.selector} type="module" src='${component.contentValue}'></${component.selector}>`
+      if (selector === 'script') {
+        return `<${selector} type="module" src='${contentValue}'></${selector}>`
       }
-      if (component.selector === 'img') {
-        return `<${component.selector}${classAttribute}${touchAction} src='${component.contentValue}' />`
+      if (selector === 'img') {
+        return `<${selector}${classAttribute}${actionAttribute} src='${contentValue}' />`
       }
-      return `<${component.selector}${classAttribute}${touchAction}>${component.contentValue}</${component.selector}>`
+      return `<${selector}${classAttribute}${actionAttribute}>${contentValue}</${selector}>`
     })
     .filter(Boolean)
     .join('\n')
 
-  const varsJson = vars
-  const { lang, title, description, generator } = { ...DEFAULT_VARS, ...varsJson }
+  const { lang, title, description, generator } = { ...DEFAULT_VARS, ...vars }
 
   const htmlContent = `<!DOCTYPE html>
 <html lang="${lang}">
@@ -84,12 +90,12 @@ ${body}
 </body>
 </html>`
 
-  fs.writeFileSync(outputFile, htmlContent, 'utf8')
+  writeFileSync(outputFile, htmlContent, 'utf8')
 
   console.log(`Generated ${filename}.html with CSSX`)
 }
 
-function processCssx (content) {
+export function processCssx (content) {
   let vars = null
   const components = []
   content.replace(/([^{]+)\s*{\s*([^}]+)}/g, (match) => {

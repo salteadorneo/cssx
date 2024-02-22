@@ -2,10 +2,12 @@
   "name": "cssx",
   "version": "0.0.2",
   "description": "Compile CSS as a programming language",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "node --watch-path=./src index.js",
     "preview": "servor ./dist --reload",
+    "test": "node --test",
     "build": "node index.js"
   },
   "keywords": [
