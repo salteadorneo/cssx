@@ -1,6 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 
+const { version } = require('./package.json')
+
+const DEFAULT_VARS = { lang: 'en', title: 'CSSX', description: 'Site generated with CSSX', generator: `CSSX v${version}` }
+
 const currentDirectory = path.join(__dirname, 'src')
 
 // if (fs.existsSync(path.join(__dirname, 'dist'))) {
@@ -20,6 +24,8 @@ fs.readdirSync(currentDirectory).forEach((file) => {
 })
 
 function generateHtmlFromCssx (inputFile, outputFile) {
+  const filename = path.basename(inputFile, '.cssx')
+
   const content = fs.readFileSync(inputFile, 'utf8')
   const { vars, components } = processCssx(content)
 
@@ -58,15 +64,17 @@ function generateHtmlFromCssx (inputFile, outputFile) {
     .filter(Boolean)
     .join('\n')
 
-  const { title, description } = vars.filter(Boolean)[0] || {}
+  const varsJson = vars
+  const { lang, title, description, generator } = { ...DEFAULT_VARS, ...varsJson }
 
   const htmlContent = `<!DOCTYPE html>
-<html lang="en">
+<html lang="${lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${title}</title>
 <meta name="description" content="${description}" />
+<meta name="generator" content="${generator}" />
 <style>
 ${styles}
 </style>
@@ -77,16 +85,17 @@ ${body}
 </html>`
 
   fs.writeFileSync(outputFile, htmlContent, 'utf8')
-  console.log('Generated with CSSX')
+
+  console.log(`Generated ${filename}.html with CSSX`)
 }
 
 function processCssx (content) {
-  const vars = []
+  let vars = null
   const components = []
   content.replace(/([^{]+)\s*{\s*([^}]+)}/g, (match) => {
-    const a = getVars(match)
-    if (a) {
-      vars.push(JSON.parse(a))
+    const result = getVars(match)
+    if (result && Object.keys(result).length > 0) {
+      vars = result
     }
 
     const component = parseComponent(match)
@@ -96,27 +105,29 @@ function processCssx (content) {
 }
 
 function getVars (content) {
-  return content.replace(
+  const result = {}
+  content.replace(
     /([^{]+)\s*{\s*([^}]+)}/g,
     (match, foundSelector, foundStyles) => {
       const selector = foundSelector.trim()
 
       if (selector !== ':root') return null
 
-      return foundStyles
+      foundStyles
         .trim()
         .replace(/\n/g, '')
         .replace(/\s{2,}/g, ' ')
         .split(';')
         .filter(Boolean)
-        .map((varValue) => {
+        .forEach((varValue) => {
           const [name, value] = varValue.split(':')
           const nameParsed = name.replace('--', '').trim()
           const valueParsed = value.replace(/"/g, '').trim()
-          return JSON.stringify({ [nameParsed]: valueParsed })
+          result[nameParsed] = valueParsed
         })
     }
   )
+  return result
 }
 
 function parseComponent (content) {
