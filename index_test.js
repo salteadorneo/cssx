@@ -1,10 +1,10 @@
 import test from 'node:test'
 import { strictEqual } from 'node:assert/strict'
 
-import { processCssx } from './index.js'
+import { processCSSX } from './index.js'
 
 test('get vars root', () => {
-  const result = processCssx(`
+  const result = processCSSX(`
     :root {
       --lang: "es";
       --title: "Test";
@@ -19,16 +19,16 @@ test('get vars root', () => {
 })
 
 test('get basic html', () => {
-  const result = processCssx(`
+  const result = processCSSX(`
     body {
       font-size: 16px;
     }
   `)
-  strictEqual(result.components[0].selector, 'body')
+  strictEqual(result.elements[0].selector, 'body')
 })
 
 test('get basic html', () => {
-  const result = processCssx(`
+  const result = processCSSX(`
     body {
       font-size: 16px;
     }
@@ -37,6 +37,29 @@ test('get basic html', () => {
       font-size: 32px;
     }
   `)
-  strictEqual(result.components[0].selector, 'body')
-  strictEqual(result.components[1].selector, 'h1')
+  strictEqual(result.elements[0].selector, 'body')
+  strictEqual(result.elements[1].selector, 'h1')
+})
+
+test('nested', () => {
+  const result = processCSSX(`
+    nav {
+      display: "flex";
+    }
+
+    nav a {
+      content: "About";
+      touch-action: "about.html";
+    }
+
+    nav a {
+      content: "Docs";
+      touch-action: "docs.html";
+    }
+  `)
+  strictEqual(result.elements[0].selector, 'nav')
+  strictEqual(result.elements[1].selector, 'a')
+  strictEqual(result.elements[1].selectorParent, 'nav')
+  strictEqual(result.elements[2].selector, 'a')
+  strictEqual(result.elements[2].selectorParent, 'nav')
 })

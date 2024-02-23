@@ -5,7 +5,18 @@ import { fileURLToPath } from 'url'
 const packageJSON = JSON.parse(readFileSync('./package.json'))
 const { version } = packageJSON
 
-const DEFAULT_VARS = { lang: 'en', title: 'CSSX', description: 'Site generated with CSSX', generator: `CSSX v${version}` }
+const RESERVED_PROPERTIES = [
+  'content',
+  'touch-action',
+  'src'
+]
+
+const DEFAULT_VARS = {
+  lang: 'en',
+  title: 'CSSX',
+  description: 'Site generated with CSSX',
+  generator: `CSSX v${version}`
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -23,53 +34,54 @@ readdirSync(currentDirectory).forEach((file) => {
     const inputFile = join(currentDirectory, file)
     const name = basename(file, '.cssx')
     const outputFile = join(__dirname, 'dist', `${name}.html`)
-    generateHtmlFromCssx(inputFile, outputFile)
+    generateHtml(inputFile, outputFile)
   }
 })
 
-export function generateHtmlFromCssx (inputFile, outputFile) {
+export function generateHtml (inputFile, outputFile) {
   const filename = basename(inputFile, '.cssx')
 
   const content = readFileSync(inputFile, 'utf8')
-  const { vars, components } = processCssx(content)
 
-  if (components.length === 0) {
-    console.log(`No components found in ${inputFile}`)
+  const { vars, elements } = processCSSX(content)
+
+  if (elements.length === 0) {
+    console.log(`No components found in ${filename}.cssx`)
     return
   }
 
-  const styles = components
-    .map((component) => {
-      const { hash, selector, styles } = component
-      const className = hash ? `.cssx-${hash}` : ''
-      if (!styles) return null
-      return `${selector}${className} { ${styles} }`
-    })
+  const styles = elements
+    .map(drawClass)
     .filter(Boolean)
     .join('\n')
 
-  const body = components
-    .map((component) => {
-      const { hash, selector, contentValue, touchAction } = component
+  const elementsOpen = []
 
-      if (contentValue === '') return null
+  const body = elements.reduce((acc, element, index) => {
+    const nextElement = elements[index + 1]
+    if (nextElement?.selectorParent === element.selector) {
+      elementsOpen.push(element.selector)
+      const elementContent = drawElement(element, false)
+      if (elementContent) {
+        return `${acc}\n${elementContent}`
+      }
+    }
+    const elementContent = drawElement(element)
+    if (elementContent) {
+      let elementsToClose = ''
+      while (elementsOpen.length && nextElement?.selectorParent !== elementsOpen.at(-1)) {
+        elementsToClose += `\n</${elementsOpen.at(-1)}>`
+        elementsOpen.pop()
+      }
 
-      const classAttribute = hash
-        ? ` class="cssx-${hash}"`
-        : ''
-      const actionAttribute = touchAction
-        ? (selector === 'a' ? ` href="${touchAction}"` : ` onclick="${touchAction}"`)
-        : ''
-      if (selector === 'script') {
-        return `<${selector} type="module" src='${contentValue}'></${selector}>`
+      if (elementsToClose !== '') {
+        return `${acc}\n${elementContent}${elementsToClose}`
       }
-      if (selector === 'img') {
-        return `<${selector}${classAttribute}${actionAttribute} src='${contentValue}' />`
-      }
-      return `<${selector}${classAttribute}${actionAttribute}>${contentValue}</${selector}>`
-    })
-    .filter(Boolean)
-    .join('\n')
+
+      return `${acc}\n${elementContent}`
+    }
+    return acc
+  }, '')
 
   const { lang, title, description, generator } = { ...DEFAULT_VARS, ...vars }
 
@@ -95,22 +107,75 @@ ${body}
   console.log(`Generated ${filename}.html with CSSX`)
 }
 
-export function processCssx (content) {
+export function processCSSX (content) {
   let vars = null
-  const components = []
-  content.replace(/([^{]+)\s*{\s*([^}]+)}/g, (match) => {
-    const result = getVars(match)
+  const elements = []
+
+  content.replace(/([^{]+)\s*{\s*([^}]+)}/g, (block) => {
+    const result = getVariables(block)
     if (result && Object.keys(result).length > 0) {
       vars = result
     }
 
-    const component = parseComponent(match)
-    components.push(component)
+    const elem = getInfoElement(block)
+    elements.push(elem)
   })
-  return { vars, components }
+  return { vars, elements }
 }
 
-function getVars (content) {
+export function drawClass (element) {
+  const { hash, selector, styles } = element
+  if (!styles) {
+    return null
+  }
+  const className = hash ? `.cssx-${hash}` : ''
+  return `${selector}${className} { ${styles} }`
+}
+
+export function drawElement (element, endTag = true) {
+  const {
+    hash,
+    selector,
+    content = '',
+    src = '',
+    'touch-action': touchAction = ''
+  } = element
+
+  if (selector === ':root' || selector === 'body') {
+    return null
+  }
+
+  if (selector === 'script') {
+    return `<${selector} type="module" src='${src}'></${selector}>`
+  }
+
+  const attributes = {}
+  attributes.class = `cssx-${hash}`
+
+  if (touchAction) {
+    if (selector === 'a') {
+      attributes.href = touchAction
+    } else {
+      attributes.onclick = touchAction
+    }
+  }
+
+  const attr = Object.keys(attributes)
+    .map((key) => ` ${key}="${attributes[key]}"`)
+    .join('')
+
+  if (selector === 'img') {
+    return `<${selector}${attr} src='${src}' alt='${content}' />`
+  }
+
+  if (!endTag) {
+    return `<${selector}${attr}>${content}`
+  }
+
+  return `<${selector}${attr}>${content}</${selector}>`
+}
+
+function getVariables (content) {
   const result = {}
   content.replace(
     /([^{]+)\s*{\s*([^}]+)}/g,
@@ -136,23 +201,29 @@ function getVars (content) {
   return result
 }
 
-function parseComponent (content) {
+function getInfoElement (value) {
   let selector = ''
-  let styles = ''
-  let contentValue = ''
-  let touchAction = ''
+  let selectorParent = null
 
-  content.replace(
+  let styles = ''
+
+  const properties = {}
+
+  value.replace(
     /([^{]+)\s*{\s*([^}]+)}/g,
     (match, foundSelector, foundStyles) => {
       selector = foundSelector.trim()
 
-      // remove attributes reserved for CSSX
-      const reservedAttributes = ['content', 'touch-action', 'src']
+      const selectors = selector.split(' ')
+      if (selectors.length > 1) {
+        selectorParent = selectors.at(-2)
+        selector = selectors.at(-1)
+      }
+
       const stylesParsed = foundStyles
         .trim()
         .replace(
-          new RegExp(`(${reservedAttributes.join('|')})\\s*:\\s*"[^"]+";`, 'g'),
+          new RegExp(`(${RESERVED_PROPERTIES.join('|')})\\s*:\\s*"[^"]+";`, 'g'),
           ''
         )
       const stylesClean = stylesParsed
@@ -164,22 +235,16 @@ function parseComponent (content) {
       return ''
     }
   )
+  const regexProps = new RegExp(`(${RESERVED_PROPERTIES.join('|')}):\\s*"([^"]+)";`, 'g')
 
-  content.replace(/content:\s*"([^"]+)";/g, (match, found) => {
-    contentValue = found.trim()
+  value.replace(regexProps, (match, property, found) => {
+    properties[property] = found.trim()
     return ''
   })
 
-  content.replace(/src:\s*"([^"]+)";/g, (match, found) => {
-    contentValue = found.trim()
-    return ''
-  })
+  const selectorsNonClass = [':root', 'html', 'body']
 
-  content.replace(/touch-action:\s*"([^"]+)";/g, (match, found) => {
-    touchAction = found.trim()
-    return ''
-  })
+  const hash = !selectorsNonClass.includes(selector) && Math.random().toString(36).substring(7)
 
-  const hash = contentValue ? Math.random().toString(36).substring(7) : ''
-  return { hash, selector, styles, contentValue, touchAction }
+  return { hash, selector, selectorParent, styles, ...properties }
 }
