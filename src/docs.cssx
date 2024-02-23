@@ -1,0 +1,72 @@
+:root {
+    --title: "CSSX Example";
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+header h1 {
+    content: "cssx";
+    margin: 0;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+header nav a {
+    content: "Home";
+    color: #000000;
+    font-weight: 500;
+    text-decoration: none;
+    touch-action: "index.html";
+}
+
+header nav a {
+    content: "Docs";
+    color: #000000;
+    font-weight: 500;
+    text-decoration: none;
+    touch-action: "docs.html";
+}
+
+header nav a {
+    touch-action: "https://github.com/salteadorneo/cssx";
+}
+
+header nav a img {
+    src: "https://svgl.vercel.app/library/github.svg";
+    width: 26px;
+    height: 26px;
+    vertical-align: middle;
+    filter: brightness(0);
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+main h2 {
+    content: "Documentation";
+}
+
+main p {
+    content: "Coming soon...";
+}
