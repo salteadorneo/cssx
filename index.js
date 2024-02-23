@@ -22,32 +22,57 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const currentDirectory = join(__dirname, 'src')
 
-// if (fs.existsSync(path.join(__dirname, 'dist'))) {
-//   fs.rmdirSync(path.join(__dirname, 'dist'), { recursive: true });
-// }
-if (!existsSync(join(__dirname, 'dist'))) {
-  mkdirSync(join(__dirname, 'dist'))
+const args = process.argv.slice(2)
+args.forEach((arg) => {
+  if (arg === '--help') {
+    console.log(`CSSX v${version}`)
+    console.log('Usage: node index.js [options]')
+    console.log('Options:')
+    console.log('  --output=dist   Output directory')
+    console.log('  --help          Show help')
+    console.log('  --version       Show version number')
+    console.log('Examples:')
+    console.log('  node index.js --output=dist')
+    process.exit(0)
+  }
+  if (arg === '--version') {
+    console.log(version)
+    process.exit(0)
+  }
+})
+
+let buildDir = 'dist'
+args
+  .filter((arg) => arg.startsWith('--output'))
+  .forEach((arg) => {
+    buildDir = arg.split('=')[1] || 'dist'
+  })
+
+if (!existsSync(join(__dirname, buildDir))) {
+  mkdirSync(join(__dirname, buildDir))
 }
 
 readdirSync(currentDirectory).forEach((file) => {
   if (extname(file) === '.cssx') {
     const inputFile = join(currentDirectory, file)
+    const content = readFileSync(inputFile, 'utf8')
+
+    const htmlContent = getHtmlFromCSSX(content)
+
     const name = basename(file, '.cssx')
-    const outputFile = join(__dirname, 'dist', `${name}.html`)
-    generateHtml(inputFile, outputFile)
+    const outputFile = join(__dirname, buildDir, `${name}.html`)
+    writeFileSync(outputFile, htmlContent, 'utf8')
+
+    console.log(`Generated ${name}.html with CSSX`)
   }
 })
+console.log(`Build completed in /${buildDir} directory`)
 
-export function generateHtml (inputFile, outputFile) {
-  const filename = basename(inputFile, '.cssx')
-
-  const content = readFileSync(inputFile, 'utf8')
-
-  const { vars, elements } = processCSSX(content)
+export function getHtmlFromCSSX (code) {
+  const { vars, elements } = processCSSX(code)
 
   if (elements.length === 0) {
-    console.log(`No components found in ${filename}.cssx`)
-    return
+    return ''
   }
 
   const styles = elements
@@ -102,9 +127,7 @@ ${body}
 </body>
 </html>`
 
-  writeFileSync(outputFile, htmlContent, 'utf8')
-
-  console.log(`Generated ${filename}.html with CSSX`)
+  return htmlContent
 }
 
 export function processCSSX (content) {
@@ -146,7 +169,14 @@ export function drawElement (element, endTag = true) {
   }
 
   if (selector === 'script') {
-    return `<${selector} type="module" src='${src}'></${selector}>`
+    if (src) {
+      return `<${selector} src='${src}'></${selector}>`
+    }
+    return `<${selector}>${content}</${selector}>`
+  }
+
+  if (selector === 'link') {
+    return `<${selector} rel="stylesheet" href='${src}' />`
   }
 
   const attributes = {}
@@ -170,6 +200,19 @@ export function drawElement (element, endTag = true) {
 
   if (!endTag) {
     return `<${selector}${attr}>${content}`
+  }
+
+  if (selector === 'pre') {
+    const contentParsed = content
+      .replace(/{/g, '&#123;')
+      .replace(/}/g, '&#125;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\\n/g, '<br />')
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+
+    return `<${selector}${attr}><code>${contentParsed}</code></${selector}>`
   }
 
   return `<${selector}${attr}>${content}</${selector}>`
