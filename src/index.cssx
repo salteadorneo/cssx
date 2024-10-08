@@ -1,5 +1,5 @@
 :root {
-    --title: "CSSX Example";
+    --title: "CSSX - A CSS preprocessor";
 }
 
 body {
@@ -7,137 +7,144 @@ body {
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
-}
 
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    max-width: 600px;
-    margin: 0 auto;
-}
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        max-width: 600px;
+        margin: 0 auto;
 
-header h1 {
-    content: "cssx";
-    margin: 0;
-}
+        h1 {
+            margin: 0;
 
-header nav {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
+            a {
+                touch-action: "/";
+                content: "cssx";
+                color: #000000;
+                text-decoration: none;
+            }
+        }
 
-header nav a {
-    content: "Home";
-    color: #000000;
-    font-weight: 500;
-    text-decoration: none;
-    touch-action: "index.html";
-}
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
 
-header nav a {
-    content: "Docs";
-    color: #000000;
-    font-weight: 500;
-    text-decoration: none;
-    touch-action: "docs.html";
-}
+            a {
+                content: "Home";
+                color: #000000;
+                font-weight: 500;
+                text-decoration: none;
+                touch-action: "index.html";
+            }
 
-header nav a {
-    touch-action: "https://github.com/salteadorneo/cssx";
-}
+            a {
+                content: "Docs";
+                color: #000000;
+                font-weight: 500;
+                text-decoration: none;
+                touch-action: "docs.html";
+            }
 
-header nav a img {
-    src: "https://svgl.vercel.app/library/github.svg";
-    width: 26px;
-    height: 26px;
-    vertical-align: middle;
-    filter: brightness(0);
-}
+            a {
+                touch-action: "https://github.com/salteadorneo/cssx";
 
-main {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-}
+                img {
+                    src: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
+                    width: 26px;
+                    height: 26px;
+                    vertical-align: middle;
+                    mix-blend-mode: multiply;
+                }
+            }
+        }
+    }
 
-main h2 {
-    content: "Introduction";
-}
+    main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
 
-main p {
-    content: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
-}
+        h2 {
+            content: "Introduction";
+        }
 
-main h2 {
-    content: "Example";
-}
+        p {
+            content: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+        }
 
-main p {
-    content: "The button below is styled with CSSX and has a custom touch-action property that triggers a confetti effect when clicked.";
-}
+        h2 {
+            content: "Example";
+        }
 
-main pre {
-    content: "button {\n content: &#34;Click me!&#34;;\n touch-action: &#34;confetti()&#34;;\n padding: 10px 16px;\n border: none;\n border-radius: 8px;\n color: white;\n background-color: #007bff;\n&#125;";
-    color: #f0f0f0;
-    background-color: #1b1b1b;
-    padding: 16px;
-}
+        p {
+            content: "The button below is styled with CSSX and has a custom touch-action property that triggers a confetti effect when clicked.";
+        }
 
-main div {
-    display: flex;
-    justify-content: center;
-    margin: 16px 0;
-}
+        pre {
+            content: "button {\n content: &#34;Click me!&#34;;\n touch-action: &#34;confetti()&#34;;\n padding: 10px 16px;\n border: none;\n border-radius: 8px;\n color: white;\n background-color: #007bff;\n&#125;";
+            color: #f0f0f0;
+            background-color: #1b1b1b;
+            padding: 16px;
+        }
 
-main div button {
-    content: "Click me!";
-    touch-action: "confetti()";
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    background-color: #007bff;
-}
+        div {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0;
 
-main p {
-    content: "This page is generated from a single CSSX file. View the ";
-}
+            button {
+                content: "Click me!";
+                touch-action: "confetti()";
+                padding: 10px 16px;
+                border: none;
+                border-radius: 8px;
+                color: white;
+                background-color: #007bff;
+            }
+        }
 
-main p a {
-    content: "source code in the GitHub repository";
-    touch-action: "https://github.com/salteadorneo/cssx/blob/main/src/index.cssx";
-}
+        p {
+            content: "This page is generated from a single CSSX file. View the ";
 
-main h2 {
-    content: "Usage";
-}
+            a {
+                content: "source code in the GitHub repository";
+                touch-action: "https://github.com/salteadorneo/cssx/blob/main/src/index.cssx";
+                -target: "_blank";
+            }
+        }
 
-main p {
-    content: "Download the repository and run the following command to compile the CSSX files from the src directory to the dist directory.";
-}
+        h2 {
+            content: "Usage";
+        }
 
-main pre {
-    content: "npm run dev";
-    color: #f0f0f0;
-    background-color: #1b1b1b;
-    padding: 16px;
-}
+        p {
+            content: "Download the repository and run the following command to compile the CSSX files from the src directory to the dist directory.";
+        }
 
-main section {
-    margin-top: 32px;
-}
+        pre {
+            content: "npm run dev";
+            color: #f0f0f0;
+            background-color: #1b1b1b;
+            padding: 16px;
+        }
 
-main section strong {
-    content: "Notice";
-}
+        section {
+            margin-top: 32px;
 
-main section p {
-    content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
-}
+            strong {
+                content: "Notice";
+            }
 
-script {
-    src: "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js";
+            p {
+                content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
+            }
+        }
+    }
+
+    script {
+        src: "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js";
+    }
 }

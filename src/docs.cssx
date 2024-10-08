@@ -1,5 +1,5 @@
 :root {
-    --title: "CSSX Example";
+    --title: "Documentation | CSSX - A CSS preprocessor";
 }
 
 body {
@@ -7,66 +7,93 @@ body {
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
-}
 
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    max-width: 600px;
-    margin: 0 auto;
-}
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        max-width: 600px;
+        margin: 0 auto;
 
-header h1 {
-    content: "cssx";
-    margin: 0;
-}
+        h1 {
+            margin: 0;
 
-header nav {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
+            a {
+                touch-action: "/";
+                content: "cssx";
+                color: #000000;
+                text-decoration: none;
+            }
+        }
 
-header nav a {
-    content: "Home";
-    color: #000000;
-    font-weight: 500;
-    text-decoration: none;
-    touch-action: "index.html";
-}
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
 
-header nav a {
-    content: "Docs";
-    color: #000000;
-    font-weight: 500;
-    text-decoration: none;
-    touch-action: "docs.html";
-}
+            a {
+                content: "Home";
+                color: #000000;
+                font-weight: 500;
+                text-decoration: none;
+                touch-action: "index.html";
+            }
 
-header nav a {
-    touch-action: "https://github.com/salteadorneo/cssx";
-}
+            a {
+                content: "Docs";
+                color: #000000;
+                font-weight: 500;
+                text-decoration: none;
+                touch-action: "docs.html";
+            }
 
-header nav a img {
-    src: "https://svgl.vercel.app/library/github.svg";
-    width: 26px;
-    height: 26px;
-    vertical-align: middle;
-    filter: brightness(0);
-}
+            a {
+                touch-action: "https://github.com/salteadorneo/cssx";
 
-main {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 16px;
-}
+                img {
+                    src: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
+                    width: 26px;
+                    height: 26px;
+                    vertical-align: middle;
+                    mix-blend-mode: multiply;
+                }
+            }
+        }
+    }
 
-main h2 {
-    content: "Documentation";
-}
+    main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
 
-main p {
-    content: "Coming soon...";
+        h2 {
+            content: "Documentation";
+        }
+
+        p {
+            content: "Attributes";
+        }
+
+        pre {
+            content: "content: &#34;ads&#34;;";
+            color: #f0f0f0;
+            background-color: #1b1b1b;
+            padding: 16px;
+        }
+
+        pre {
+            content: "touch-action: &#34;ads&#34;;";
+            color: #f0f0f0;
+            background-color: #1b1b1b;
+            padding: 16px;
+        }
+
+        pre {
+            content: "src: &#34;ads&#34;;";
+            color: #f0f0f0;
+            background-color: #1b1b1b;
+            padding: 16px;
+        }
+    }
 }
