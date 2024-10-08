@@ -81,15 +81,16 @@ function processCSSX (node, styles = [], classMappings = {}) {
       })
       return body
     }
-    let elementStyles = ''
+    const elementTag = node.selector
 
     const props = {}
 
-    const className = generateHash(node.selector + Math.random())
+    const className = generateHash(elementTag + Math.random())
     props.class = className
 
+    let elementStyles = ''
     node.walkDecls(decl => {
-      if (decl.parent.selector === node.selector) {
+      if (decl.parent.selector === elementTag) {
         if (decl.prop.startsWith('--')) {
           props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
         } else {
@@ -99,11 +100,9 @@ function processCSSX (node, styles = [], classMappings = {}) {
     })
 
     if (elementStyles) {
-      styles.push(`${node.selector}.${className} {\n${elementStyles}}`)
-      classMappings[node.selector] = className
+      styles.push(`${elementTag}.${className} {\n${elementStyles}}`)
+      classMappings[elementTag] = className
     }
-
-    const elementTag = node.selector
 
     const propsParser = (props) => {
       return Object.keys(props).reduce((acc, key) => {
