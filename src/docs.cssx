@@ -20,8 +20,8 @@ body {
             margin: 0;
 
             a {
-                touch-action: "/";
-                content: "cssx";
+                --href: "/";
+                --content: "cssx";
                 color: #000000;
                 text-decoration: none;
             }
@@ -33,26 +33,26 @@ body {
             gap: 16px;
 
             a {
-                content: "Home";
+                --content: "Home";
                 color: #000000;
                 font-weight: 500;
                 text-decoration: none;
-                touch-action: "index.html";
+                --href: "index.html";
             }
 
             a {
-                content: "Docs";
+                --content: "Docs";
                 color: #000000;
                 font-weight: 500;
                 text-decoration: none;
-                touch-action: "docs.html";
+                --href: "docs.html";
             }
 
             a {
-                touch-action: "https://github.com/salteadorneo/cssx";
+                --href: "https://github.com/salteadorneo/cssx";
 
                 img {
-                    src: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
+                    --src: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
                     width: 26px;
                     height: 26px;
                     vertical-align: middle;
@@ -68,29 +68,36 @@ body {
         padding: 16px;
 
         h2 {
-            content: "Documentation";
+            --content: "Documentation";
         }
 
         p {
-            content: "Attributes";
+            --content: "Attributes";
         }
 
         pre {
-            content: "content: &#34;ads&#34;;";
+            --content: "--content: &#34;ads&#34;;";
             color: #f0f0f0;
             background-color: #1b1b1b;
             padding: 16px;
         }
 
         pre {
-            content: "touch-action: &#34;ads&#34;;";
+            --content: "--src: &#34;ads&#34;;";
             color: #f0f0f0;
             background-color: #1b1b1b;
             padding: 16px;
         }
 
         pre {
-            content: "src: &#34;ads&#34;;";
+            --content: "--href: &#34;ads&#34;;";
+            color: #f0f0f0;
+            background-color: #1b1b1b;
+            padding: 16px;
+        }
+
+        pre {
+            --content: "--onclick: &#34;alert()&#34;;";
             color: #f0f0f0;
             background-color: #1b1b1b;
             padding: 16px;

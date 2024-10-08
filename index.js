@@ -81,18 +81,17 @@ function processCSSX (node, styles = [], classMappings = {}) {
       })
       return body
     }
-    let content, touchAction, src
     let elementStyles = ''
+
+    const props = {}
+
     const className = generateHash(node.selector + Math.random())
+    props.class = className
 
     node.walkDecls(decl => {
       if (decl.parent.selector === node.selector) {
-        if (decl.prop === 'content') {
-          content = decl.value.replace(/['"]/g, '')
-        } else if (decl.prop === 'touch-action') {
-          touchAction = decl.value.replace(/['"]/g, '')
-        } else if (decl.prop === 'src') {
-          src = decl.value.replace(/['"]/g, '')
+        if (decl.prop.startsWith('--')) {
+          props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
         } else {
           elementStyles += `${decl.prop}: ${decl.value};\n`
         }
@@ -106,32 +105,19 @@ function processCSSX (node, styles = [], classMappings = {}) {
 
     const elementTag = node.selector
 
-    const props = [
-      { class: className },
-      { src }
-    ]
-
-    if (elementTag === 'a') {
-      props.push({ href: touchAction })
-    }
-    if (elementTag === 'button') {
-      props.push({ onclick: touchAction })
-    }
-
     const propsParser = (props) => {
-      return props
-        .map(prop => {
-          const key = Object.keys(prop)[0]
-          const value = prop[key]
-          return value ? ` ${key}="${value}"` : ''
-        })
-        .join('')
+      return Object.keys(props).reduce((acc, key) => {
+        if (key === 'content') {
+          return acc
+        }
+        return `${acc} ${key}="${props[key]}"`
+      }, '')
     }
 
     body += `<${elementTag}${propsParser(props)}>`
 
     if (elementTag === 'pre') {
-      content = content
+      props.content = props.content
         .replace(/{/g, '&#123;')
         .replace(/}/g, '&#125;')
         .replace(/</g, '&lt;')
@@ -141,7 +127,7 @@ function processCSSX (node, styles = [], classMappings = {}) {
         .trim()
     }
 
-    body += content || ''
+    body += props.content || ''
 
     node.nodes.forEach(childNode => {
       body += processCSSX(childNode, styles, classMappings)
