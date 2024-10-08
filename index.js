@@ -1,17 +1,12 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import { join, extname, basename, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import postcss from 'postcss'
 
 const packageJSON = JSON.parse(readFileSync('./package.json'))
 const { version } = packageJSON
 
-const RESERVED_PROPERTIES = [
-  'content',
-  'touch-action',
-  'src'
-]
-
-const DEFAULT_VARS = {
+export const globals = {
   lang: 'en',
   title: 'CSSX',
   description: 'Site generated with CSSX',
@@ -57,7 +52,7 @@ readdirSync(currentDirectory).forEach((file) => {
     const inputFile = join(currentDirectory, file)
     const content = readFileSync(inputFile, 'utf8')
 
-    const htmlContent = getHtmlFromCSSX(content)
+    const htmlContent = transpileCSSX(content)
 
     const name = basename(file, '.cssx')
     const outputFile = join(__dirname, buildDir, `${name}.html`)
@@ -68,226 +63,125 @@ readdirSync(currentDirectory).forEach((file) => {
 })
 console.log(`Build completed in /${buildDir} directory`)
 
-export function getHtmlFromCSSX (code) {
-  const { vars, elements } = processCSSX(code)
+function generateHash (selector) {
+  return btoa(selector + Date.now()).replace(/=/g, '').substring(0, 8)
+}
 
-  if (elements.length === 0) {
-    return ''
+function processCSSX (node, styles = [], classMappings = {}) {
+  let body = ''
+
+  if (node.type === 'root') {
+    node.nodes.forEach(childNode => {
+      body += processCSSX(childNode, styles, classMappings)
+    })
+  } else if (node.type === 'rule') {
+    if (node.selector === ':root') {
+      node.walkDecls(({ prop, value }) => {
+        globals[prop.replace('--', '')] = value.replace(/['"]/g, '')
+      })
+      return body
+    }
+    let content, touchAction, src
+    let elementStyles = ''
+    const className = generateHash(node.selector + Math.random())
+
+    node.walkDecls(decl => {
+      if (decl.parent.selector === node.selector) {
+        if (decl.prop === 'content') {
+          content = decl.value.replace(/['"]/g, '')
+        } else if (decl.prop === 'touch-action') {
+          touchAction = decl.value.replace(/['"]/g, '')
+        } else if (decl.prop === 'src') {
+          src = decl.value.replace(/['"]/g, '')
+        } else {
+          elementStyles += `${decl.prop}: ${decl.value};\n`
+        }
+      }
+    })
+
+    if (elementStyles) {
+      styles.push(`${node.selector}.${className} {\n${elementStyles}}`)
+      classMappings[node.selector] = className
+    }
+
+    const elementTag = node.selector
+
+    const props = [
+      { class: className },
+      { src }
+    ]
+
+    if (elementTag === 'a') {
+      props.push({ href: touchAction })
+    }
+    if (elementTag === 'button') {
+      props.push({ onclick: touchAction })
+    }
+
+    const propsParser = (props) => {
+      return props
+        .map(prop => {
+          const key = Object.keys(prop)[0]
+          const value = prop[key]
+          return value ? ` ${key}="${value}"` : ''
+        })
+        .join('')
+    }
+
+    body += `<${elementTag}${propsParser(props)}>`
+
+    if (elementTag === 'pre') {
+      content = content
+        .replace(/{/g, '&#123;')
+        .replace(/}/g, '&#125;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\\n/g, '<br />')
+        .replace(/\s{2,}/g, ' ')
+        .trim()
+    }
+
+    body += content || ''
+
+    node.nodes.forEach(childNode => {
+      body += processCSSX(childNode, styles, classMappings)
+    })
+
+    body += `</${elementTag}>\n`
   }
 
-  const styles = elements
-    .map(drawClass)
-    .filter(Boolean)
-    .join('\n')
+  console.log('body', body)
 
-  const elementsOpen = []
+  return body
+}
 
-  const body = elements.reduce((acc, element, index) => {
-    const nextElement = elements[index + 1]
-    if (nextElement?.selectorParent === element.selector) {
-      elementsOpen.push(element.selector)
-      const elementContent = drawElement(element, false)
-      if (elementContent) {
-        return `${acc}\n${elementContent}`
-      }
-    }
-    const elementContent = drawElement(element)
-    if (elementContent) {
-      let elementsToClose = ''
-      while (elementsOpen.length && nextElement?.selectorParent !== elementsOpen.at(-1)) {
-        elementsToClose += `\n</${elementsOpen.at(-1)}>`
-        elementsOpen.pop()
-      }
+export function transpileCSSX (code) {
+  const root = postcss.parse(code)
 
-      if (elementsToClose !== '') {
-        return `${acc}\n${elementContent}${elementsToClose}`
-      }
+  const styles = []
 
-      return `${acc}\n${elementContent}`
-    }
-    return acc
-  }, '')
+  const body = processCSSX(root, styles)
 
-  const { lang, title, description, generator } = { ...DEFAULT_VARS, ...vars }
+  const { lang, title, description, generator } = { ...globals }
 
-  const htmlContent = `<!DOCTYPE html>
+  let html = `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${title}</title>
-<meta name="description" content="${description}" />
-<meta name="generator" content="${generator}" />
-<style>
-${styles}
-</style>
-</head>
-<body>
-${body}
-</body>
-</html>`
+<meta name="description" content="${description}" />`
 
-  return htmlContent
-}
-
-export function processCSSX (content) {
-  let vars = null
-  const elements = []
-
-  content.replace(/([^{]+)\s*{\s*([^}]+)}/g, (block) => {
-    const result = getVariables(block)
-    if (result && Object.keys(result).length > 0) {
-      vars = result
-    }
-
-    const elem = getInfoElement(block)
-    elements.push(elem)
-  })
-  return { vars, elements }
-}
-
-export function drawClass (element) {
-  const { hash, selector, styles } = element
-  if (!styles) {
-    return null
-  }
-  const className = hash ? `.cssx-${hash}` : ''
-  return `${selector}${className} { ${styles} }`
-}
-
-export function drawElement (element, endTag = true) {
-  const {
-    hash,
-    selector,
-    content = '',
-    src = '',
-    'touch-action': touchAction = ''
-  } = element
-
-  if (selector === ':root' || selector === 'body') {
-    return null
+  if (generator) {
+    html += `\n<meta name="generator" content="${generator}" />`
   }
 
-  if (selector === 'script') {
-    if (src) {
-      return `<${selector} src='${src}'></${selector}>`
-    }
-    return `<${selector}>${content}</${selector}>`
+  if (styles.length > 0) {
+    html += '<style>\n' + styles.join('\n') + '</style>\n'
   }
 
-  if (selector === 'link') {
-    return `<${selector} rel="stylesheet" href='${src}' />`
-  }
+  html += `</head>
+${body}</html>`
 
-  const attributes = {}
-  attributes.class = `cssx-${hash}`
-
-  if (touchAction) {
-    if (selector === 'a') {
-      attributes.href = touchAction
-    } else {
-      attributes.onclick = touchAction
-    }
-  }
-
-  const attr = Object.keys(attributes)
-    .map((key) => ` ${key}="${attributes[key]}"`)
-    .join('')
-
-  if (selector === 'img') {
-    return `<${selector}${attr} src='${src}' alt='${content}' />`
-  }
-
-  if (!endTag) {
-    return `<${selector}${attr}>${content}`
-  }
-
-  if (selector === 'pre') {
-    const contentParsed = content
-      .replace(/{/g, '&#123;')
-      .replace(/}/g, '&#125;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/\\n/g, '<br />')
-      .replace(/\s{2,}/g, ' ')
-      .trim()
-
-    return `<${selector}${attr}><code>${contentParsed}</code></${selector}>`
-  }
-
-  return `<${selector}${attr}>${content}</${selector}>`
-}
-
-function getVariables (content) {
-  const result = {}
-  content.replace(
-    /([^{]+)\s*{\s*([^}]+)}/g,
-    (match, foundSelector, foundStyles) => {
-      const selector = foundSelector.trim()
-
-      if (selector !== ':root') return null
-
-      foundStyles
-        .trim()
-        .replace(/\n/g, '')
-        .replace(/\s{2,}/g, ' ')
-        .split(';')
-        .filter(Boolean)
-        .forEach((varValue) => {
-          const [name, value] = varValue.split(':')
-          const nameParsed = name.replace('--', '').trim()
-          const valueParsed = value.replace(/"/g, '').trim()
-          result[nameParsed] = valueParsed
-        })
-    }
-  )
-  return result
-}
-
-function getInfoElement (value) {
-  let selector = ''
-  let selectorParent = null
-
-  let styles = ''
-
-  const properties = {}
-
-  value.replace(
-    /([^{]+)\s*{\s*([^}]+)}/g,
-    (match, foundSelector, foundStyles) => {
-      selector = foundSelector.trim()
-
-      const selectors = selector.split(' ')
-      if (selectors.length > 1) {
-        selectorParent = selectors.at(-2)
-        selector = selectors.at(-1)
-      }
-
-      const stylesParsed = foundStyles
-        .trim()
-        .replace(
-          new RegExp(`(${RESERVED_PROPERTIES.join('|')})\\s*:\\s*"[^"]+";`, 'g'),
-          ''
-        )
-      const stylesClean = stylesParsed
-        .trim()
-        .replace(/\n/g, '')
-        .replace(/\s{2,}/g, ' ')
-
-      styles = stylesClean
-      return ''
-    }
-  )
-  const regexProps = new RegExp(`(${RESERVED_PROPERTIES.join('|')}):\\s*"([^"]+)";`, 'g')
-
-  value.replace(regexProps, (match, property, found) => {
-    properties[property] = found.trim()
-    return ''
-  })
-
-  const selectorsNonClass = [':root', 'html', 'body']
-
-  const hash = !selectorsNonClass.includes(selector) && Math.random().toString(36).substring(7)
-
-  return { hash, selector, selectorParent, styles, ...properties }
+  return html
 }
