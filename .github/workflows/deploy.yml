@@ -50,6 +50,9 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
+      - name: Install
+        run: |
+          ${{ steps.detect-package-manager.outputs.runner }} i
       - name: Build
         run: |
           ${{ steps.detect-package-manager.outputs.runner }} run build
