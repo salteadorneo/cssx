@@ -150,8 +150,6 @@ function processCSSX (node, styles = [], classMappings = {}) {
     body += `</${elementTag}>\n`
   }
 
-  console.log('body', body)
-
   return body
 }
 
