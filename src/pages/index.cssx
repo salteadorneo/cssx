@@ -94,6 +94,14 @@ body {
             }
         }
 
+        h2 {
+            --content: "Sponsors";
+        }
+
+        p {
+            --content: "Really? You want to sponsor this project? 😂";
+        }
+
         section {
             margin-top: 32px;
 
