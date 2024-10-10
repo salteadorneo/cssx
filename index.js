@@ -104,8 +104,12 @@ function processCSSX (node, styles = [], classMappings = {}) {
           if (decl.prop === '--import') {
             const importFile = decl.value.replace(/['"]/g, '')
             const importContent = readFileSync(join(currentDirectory, importFile), 'utf8')
-            const importRoot = postcss.parse(importContent)
-            bodyImport = processCSSX(importRoot, styles, classMappings)
+            if (extname(importFile) === '.cssx') {
+              const importRoot = postcss.parse(importContent)
+              bodyImport = processCSSX(importRoot, styles, classMappings)
+            } else {
+              bodyImport = importContent
+            }
           } else {
             props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
           }
