@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { join, extname, basename, dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import postcss from 'postcss'
@@ -11,14 +11,11 @@ const { version } = packageJSON
 
 export const globals = {
   lang: 'en',
+  icon: 'favicon.svg',
   title: 'CSSX',
   description: 'Site generated with CSSX',
   generator: `CSSX v${version}`
 }
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-const currentDirectory = join(__dirname, 'src/pages')
 
 const args = process.argv.slice(2)
 args.forEach((arg) => {
@@ -46,13 +43,31 @@ args
     buildDir = arg.split('=')[1] || 'dist'
   })
 
-if (!existsSync(join(__dirname, buildDir))) {
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+if (existsSync(join(__dirname, buildDir))) {
+  readdirSync(join(__dirname, buildDir)).forEach((file) => {
+    unlinkSync(join(__dirname, buildDir, file))
+  })
+} else {
   mkdirSync(join(__dirname, buildDir))
 }
 
-readdirSync(currentDirectory).forEach((file) => {
+try {
+  const publicDirectory = join(__dirname, 'public')
+  readdirSync(publicDirectory).forEach((file) => {
+    const inputFile = join(publicDirectory, file)
+    const outputFile = join(__dirname, buildDir, file)
+    writeFileSync(outputFile, readFileSync(inputFile))
+  })
+} catch (err) {
+  console.log('No public directory found')
+}
+
+const pagesDirectory = join(__dirname, 'src/pages')
+readdirSync(pagesDirectory).forEach((file) => {
   if (extname(file) === '.cssx') {
-    const inputFile = join(currentDirectory, file)
+    const inputFile = join(pagesDirectory, file)
     const content = readFileSync(inputFile, 'utf8')
 
     const htmlContent = transpileCSSX(content)
@@ -103,7 +118,7 @@ function processCSSX (node, styles = [], classMappings = {}) {
         if (decl.prop.startsWith('--')) {
           if (decl.prop === '--import') {
             const importFile = decl.value.replace(/['"]/g, '')
-            const importContent = readFileSync(join(currentDirectory, importFile), 'utf8')
+            const importContent = readFileSync(join(pagesDirectory, importFile), 'utf8')
             if (extname(importFile) === '.cssx') {
               const importRoot = postcss.parse(importContent)
               bodyImport = processCSSX(importRoot, styles, classMappings)
@@ -182,13 +197,14 @@ export function transpileCSSX (code) {
 
   const body = processCSSX(root, styles)
 
-  const { lang, title, description, generator } = { ...globals }
+  const { lang, icon, title, description, generator } = { ...globals }
 
   let html = `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="${icon}">
 <title>${title}</title>
 <meta name="description" content="${description}" />`
 
