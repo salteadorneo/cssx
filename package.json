@@ -5,8 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch-path=./src index.js",
-    "preview": "servor ./dist --reload",
+    "dev": "node --watch-path=./src index.js --serve",
     "test": "node --test",
     "test:watch": "node --test --watch",
     "build": "node index.js"
@@ -23,7 +22,6 @@
     "postcss": "^8.4.47"
   },
   "devDependencies": {
-    "servor": "^4.0.2",
     "standard": "^17.1.0"
   },
   "eslintConfig": {

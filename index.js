@@ -1,7 +1,10 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
-import { join, extname, basename, dirname } from 'path'
+import { join, extname, basename, dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 import postcss from 'postcss'
+
+import { createServer } from 'http'
+import { readFile } from 'fs/promises'
 
 const packageJSON = JSON.parse(readFileSync('./package.json'))
 const { version } = packageJSON
@@ -15,7 +18,7 @@ export const globals = {
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const currentDirectory = join(__dirname, 'src')
+const currentDirectory = join(__dirname, 'src/pages')
 
 const args = process.argv.slice(2)
 args.forEach((arg) => {
@@ -64,7 +67,7 @@ readdirSync(currentDirectory).forEach((file) => {
 console.log(`Build completed in /${buildDir} directory`)
 
 function generateHash (selector) {
-  return btoa(selector + Date.now()).replace(/=/g, '').substring(0, 8)
+  return btoa(selector).replace(/=/g, '').substring(0, 8)
 }
 
 function processCSSX (node, styles = [], classMappings = {}) {
@@ -81,26 +84,50 @@ function processCSSX (node, styles = [], classMappings = {}) {
       })
       return body
     }
+
     const elementTag = node.selector
 
     const props = {}
 
-    const className = generateHash(elementTag + Math.random())
+    const className = `cssx-${generateHash(elementTag + Math.random())}`
     props.class = className
 
     let elementStyles = ''
+    let bodyImport = ''
+    const subelementStyles = {}
+
+    let exit = false
     node.walkDecls(decl => {
+      if (exit) return
       if (decl.parent.selector === elementTag) {
         if (decl.prop.startsWith('--')) {
-          props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
+          if (decl.prop === '--import') {
+            const importFile = decl.value.replace(/['"]/g, '')
+            const importContent = readFileSync(join(currentDirectory, importFile), 'utf8')
+            const importRoot = postcss.parse(importContent)
+            bodyImport = processCSSX(importRoot, styles, classMappings)
+          } else {
+            props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
+          }
         } else {
-          elementStyles += `${decl.prop}: ${decl.value};\n`
+          if (decl.parent.selector.startsWith('&')) {
+            const adjustedSelector = decl.parent.selector
+            subelementStyles[adjustedSelector] = (subelementStyles[adjustedSelector] || '') + `${decl.prop}: ${decl.value};`
+          } else {
+            elementStyles += `${decl.prop}: ${decl.value};\n`
+          }
         }
+      } else {
+        exit = true
       }
     })
 
     if (elementStyles) {
-      styles.push(`${elementTag}.${className} {\n${elementStyles}}`)
+      const substyles = Object.keys(subelementStyles).map(key => {
+        return `${key} {\n${subelementStyles[key]}\n}`
+      }).join('\n')
+
+      styles.push(`${elementTag}.${className} {\n${elementStyles}${substyles}}`)
       classMappings[elementTag] = className
     }
 
@@ -113,17 +140,21 @@ function processCSSX (node, styles = [], classMappings = {}) {
       }, '')
     }
 
-    body += `<${elementTag}${propsParser(props)}>`
+    if (!elementTag.startsWith('&')) {
+      body += `<${elementTag}${propsParser(props)}>`
+    }
 
-    if (elementTag === 'pre') {
-      props.content = props.content
-        .replace(/{/g, '&#123;')
-        .replace(/}/g, '&#125;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\\n/g, '<br />')
-        .replace(/\s{2,}/g, ' ')
-        .trim()
+    if (bodyImport) {
+      body += bodyImport
+    }
+
+    if (elementTag === 'code') {
+      props.content = props.content.split('\n').map(line => {
+        if (line.trimEnd().endsWith('\\')) {
+          return line.trimEnd().slice(0, -1)
+        }
+        return line
+      }).join('\n')
     }
 
     body += props.content || ''
@@ -132,7 +163,9 @@ function processCSSX (node, styles = [], classMappings = {}) {
       body += processCSSX(childNode, styles, classMappings)
     })
 
-    body += `</${elementTag}>\n`
+    if (!elementTag.startsWith('&')) {
+      body += `</${elementTag}>\n`
+    }
   }
 
   return body
@@ -160,11 +193,29 @@ export function transpileCSSX (code) {
   }
 
   if (styles.length > 0) {
-    html += '<style>\n' + styles.join('\n') + '</style>\n'
+    html += '<style>\n' + styles.join('\n') + '</style>'
   }
 
-  html += `</head>
-${body}</html>`
+  html += `\n</head>\n${body}\n</html>`
 
   return html
+}
+
+const server = createServer(async (req, res) => {
+  const url = req.url === '/' ? '/index.html' : req.url
+  const path = resolve(__dirname, buildDir, `.${url}`)
+
+  try {
+    const data = await readFile(path)
+    res.end(data)
+  } catch (err) {
+    res.statusCode = 404
+    res.end('Not Found')
+  }
+})
+
+if (args.includes('--serve')) {
+  server.listen(3000, () => {
+    console.log('Server running at http://localhost:3000/')
+  })
 }

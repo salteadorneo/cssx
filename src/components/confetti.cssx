@@ -1,0 +1,19 @@
+pre {
+    margin: 0;
+
+    code {
+        --content: "script {\
+    --src: &#34;https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js&#34;;\
+}\
+\
+button {\
+    --content: &#34;Click me!&#34;;\
+    --onclick: &#34;confetti()&#34;;\
+    padding: 10px 16px;\
+    border: none;\
+    border-radius: 8px;\
+    color: white;\
+    background-color: #007bff;\
+}";
+    }
+}

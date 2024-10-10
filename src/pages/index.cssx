@@ -1,0 +1,113 @@
+:root {
+    --title: "CSSX - A CSS preprocessor";
+    --description: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+}
+
+head {
+    link {
+        --rel: "stylesheet";
+        --href: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css";
+    }
+
+    script {
+        --src: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
+    }
+
+    script {
+        --content: "hljs.highlightAll()"
+    }
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #e4e4e4;
+    margin: 0;
+    padding: 0;
+
+    --import: "../components/header.cssx";
+
+    main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+
+        h2 {
+            --content: "Introduction";
+        }
+
+        p {
+            --content: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+        }
+
+        h2 {
+            --content: "Example";
+        }
+
+        p {
+            --content: "The button below is styled with CSSX and has a custom touch-action property that triggers a confetti effect when clicked.";
+        }
+
+        section {
+            div {
+                display: grid;
+                place-items: center;
+                padding: 20px;
+                background: #ffffff;
+
+                button {
+                    --content: "Click me!";
+                    --onclick: "confetti()";
+                    padding: 10px 16px;
+                    border: none;
+                    border-radius: 8px;
+                    color: white;
+                    background-color: #007bff;
+                }
+            }
+
+            div {
+                --import: "../components/confetti.cssx";
+            }
+        }
+
+        p {
+            --content: "This page is generated from a single CSSX file. View the ";
+
+            a {
+                --content: "source code in the GitHub repository";
+                --target: "_blank";
+                --href: "https://github.com/salteadorneo/cssx/blob/main/src/index.cssx";
+            }
+        }
+
+        h2 {
+            --content: "Usage";
+        }
+
+        p {
+            --content: "Download the repository and run the following command to compile the CSSX files from the src directory to the dist directory.";
+        }
+
+        pre {
+            code {
+                --content: "npm run dev";
+            }
+        }
+
+        section {
+            margin-top: 32px;
+
+            strong {
+                --content: "Notice";
+            }
+
+            p {
+                --content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
+            }
+        }
+    }
+
+    script {
+        --src: "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+    }
+}

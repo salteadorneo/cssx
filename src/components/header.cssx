@@ -1,0 +1,61 @@
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+
+    h1 {
+        margin: 0;
+
+        a {
+            --href: "/";
+            --content: "css";
+            color: #000000;
+            text-decoration: none;
+
+            span {
+                --content: "x";
+                color: #007bff;
+            }
+        }
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        a {
+            --content: "Docs";
+            --href: "docs.html";
+            color: #000000;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        a {
+            --href: "https://github.com/salteadorneo/cssx";
+            --target: "_blank";
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            img {
+                --src: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
+                width: 32px;
+                height: 32px;
+                vertical-align: middle;
+                mix-blend-mode: multiply;
+            }
+
+            span {
+                --content: "GitHub";
+                color: #000000;
+                font-weight: 500;
+            }
+        }
+    }
+}
