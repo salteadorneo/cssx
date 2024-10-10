@@ -1,6 +1,6 @@
 {
   "name": "cssx",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Compile CSS as a programming language",
   "type": "module",
   "main": "index.js",
