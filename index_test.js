@@ -14,6 +14,7 @@ test('default', () => {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" />
 <title>${title}</title>
 <meta name="description" content="${description}" />
 <meta name="generator" content="${generator}" />
@@ -36,6 +37,7 @@ test('get vars root', () => {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" />
 <title>Demo title</title>
 <meta name="description" content="Demo description" />
 </head>
