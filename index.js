@@ -85,12 +85,12 @@ function generateHash (selector) {
   return btoa(selector).replace(/=/g, '').substring(0, 8)
 }
 
-function processCSSX (node, styles = [], classMappings = {}) {
+function processCSSX (node, styles = []) {
   let body = ''
 
   if (node.type === 'root') {
     node.nodes.forEach(childNode => {
-      body += processCSSX(childNode, styles, classMappings)
+      body += processCSSX(childNode, styles)
     })
   } else if (node.type === 'rule') {
     if (node.selector === ':root') {
@@ -104,7 +104,7 @@ function processCSSX (node, styles = [], classMappings = {}) {
 
     const props = {}
 
-    const className = `cssx-${generateHash(elementTag + Math.random())}`
+    const className = `cssx-${generateHash(elementTag + node.source?.start.line)}`
     props.class = className
 
     let elementStyles = ''
@@ -117,13 +117,17 @@ function processCSSX (node, styles = [], classMappings = {}) {
       if (decl.parent.selector === elementTag) {
         if (decl.prop.startsWith('--')) {
           if (decl.prop === '--import') {
-            const importFile = decl.value.replace(/['"]/g, '')
-            const importContent = readFileSync(join(pagesDirectory, importFile), 'utf8')
-            if (extname(importFile) === '.cssx') {
-              const importRoot = postcss.parse(importContent)
-              bodyImport = processCSSX(importRoot, styles, classMappings)
-            } else {
-              bodyImport = importContent
+            try {
+              const importFile = decl.value.replace(/['"]/g, '')
+              const importContent = readFileSync(join(pagesDirectory, importFile), 'utf8')
+              if (extname(importFile) === '.cssx') {
+                const importRoot = postcss.parse(importContent)
+                bodyImport = processCSSX(importRoot, styles)
+              } else {
+                bodyImport = importContent
+              }
+            } catch (err) {
+              console.error(`Error: ${err.message}`)
             }
           } else {
             props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
@@ -147,7 +151,6 @@ function processCSSX (node, styles = [], classMappings = {}) {
       }).join('\n')
 
       styles.push(`${elementTag}.${className} {\n${elementStyles}${substyles}}`)
-      classMappings[elementTag] = className
     }
 
     const propsParser = (props) => {
@@ -179,7 +182,7 @@ function processCSSX (node, styles = [], classMappings = {}) {
     body += props.content || ''
 
     node.nodes.forEach(childNode => {
-      body += processCSSX(childNode, styles, classMappings)
+      body += processCSSX(childNode, styles)
     })
 
     if (!elementTag.startsWith('&')) {
