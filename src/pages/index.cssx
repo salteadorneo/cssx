@@ -4,18 +4,7 @@
 }
 
 head {
-    link {
-        --rel: "stylesheet";
-        --href: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css";
-    }
-
-    script {
-        --src: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js";
-    }
-
-    script {
-        --content: "hljs.highlightAll()"
-    }
+    --import: "../components/head.cssx";
 }
 
 body {
@@ -88,10 +77,8 @@ body {
             --content: "Download the repository and run the following command to compile the CSSX files from the src directory to the dist directory.";
         }
 
-        pre {
-            code {
-                --content: "npm run dev";
-            }
+        div {
+            --import: "../components/install.cssx";
         }
 
         h2 {

@@ -3,6 +3,10 @@
     --description: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
 }
 
+head {
+    --import: "../components/head.cssx";
+}
+
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: #e4e4e4;
@@ -24,32 +28,59 @@ body {
             --content: "Attributes";
         }
 
-        pre {
-            --content: "--content: &#34;ads&#34;;";
-            color: #f0f0f0;
-            background-color: #1b1b1b;
-            padding: 16px;
+        p {
+            --content: "Property --content is used to set the content of an element.";
         }
 
         pre {
-            --content: "--src: &#34;ads&#34;;";
-            color: #f0f0f0;
-            background-color: #1b1b1b;
-            padding: 16px;
+            code {
+                --content: "p {\
+    --content: &#34;This is the content of the paragraph&#34;;\
+}";
+            }
+        }
+
+        p {
+            --content: "It may contain other native CSS properties that will remain intact.";
         }
 
         pre {
-            --content: "--href: &#34;ads&#34;;";
-            color: #f0f0f0;
-            background-color: #1b1b1b;
-            padding: 16px;
+            code {
+                --content: "p {\
+    --content: &#34;This is the content of the paragraph&#34;;\
+    font-size: 16px;\
+    color: blue;\
+}";
+            }
+        }
+
+        p {
+            --content: "Any variable will be passed as a property to the element.";
         }
 
         pre {
-            --content: "--onclick: &#34;alert()&#34;;";
-            color: #f0f0f0;
-            background-color: #1b1b1b;
-            padding: 16px;
+            margin: 0;
+
+            code {
+                --content: "button {\
+    --content: &#34;Click me&#34;;\
+    --onclick: &#34;alert('Hello, World!')&#34;;\
+    padding: 10px 16px;\
+}";
+            }
         }
+
+        p {
+            --content: "Result";
+            font-size: 14px;
+            margin: 0;
+        }
+
+        pre {
+            code {
+                --content: "&lt;button class=&#34;cssx-YnV0dG9u&#34; onclick=&#34;alert(Hello, World!)&#34;&gt;Click me&lt;/button&gt;";
+            }
+        }
+
     }
 }

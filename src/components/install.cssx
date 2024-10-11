@@ -1,0 +1,9 @@
+pre {
+    --class: "bash";
+
+    code {
+        --content: "git clone https://github.com/salteadorneo/cssx\
+cd cssx\
+npm run dev";
+    }
+}
