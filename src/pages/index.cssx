@@ -88,18 +88,13 @@ body {
         p {
             --content: "Really? You want to sponsor this project? 😂";
         }
+    }
 
-        section {
-            margin-top: 32px;
+    footer {
+        max-width: 600px;
+        margin: 0 auto;
 
-            strong {
-                --content: "Notice";
-            }
-
-            p {
-                --content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
-            }
-        }
+        --import: "../components/footer.cssx";
     }
 
     script {

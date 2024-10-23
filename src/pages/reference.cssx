@@ -175,4 +175,11 @@ body {
             }
         }
     }
+
+    footer {
+        max-width: 600px;
+        margin: 0 auto;
+
+        --import: "../components/footer.cssx";
+    }
 }
