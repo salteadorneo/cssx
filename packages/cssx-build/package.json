@@ -1,0 +1,39 @@
+{
+  "name": "cssx-build",
+  "version": "0.0.5",
+  "description": "Compile CSS as a programming language",
+  "author": "salteadorneo",
+  "license": "MIT",
+  "homepage": "https://salteadorneo.github.io/cssx/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salteadorneo/cssx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/salteadorneo/cssx/issues",
+    "email": "hola@salteadorneo.dev"
+  },
+  "keywords": [
+    "cssx",
+    "programming",
+    "language",
+    "css"
+  ],
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "cssx-build": "cli.js"
+  },
+  "scripts": {
+    "build": "node index.js",
+    "start": "node cli.js --serve"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "postcss": "^8.0.0",
+    "servor": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
