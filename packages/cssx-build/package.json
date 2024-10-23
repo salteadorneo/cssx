@@ -1,6 +1,6 @@
 {
   "name": "cssx-build",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Compile CSS as a programming language",
   "author": "salteadorneo",
   "license": "MIT",

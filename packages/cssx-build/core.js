@@ -11,7 +11,8 @@ export const globals = {
   icon: 'favicon.svg',
   title: 'CSSX',
   description: 'Site generated with CSSX',
-  generator: `CSSX v${version}`
+  generator: `CSSX v${version}`,
+  transition: false
 }
 
 function generateHash (selector) {
@@ -133,7 +134,7 @@ export function transpileCSSX (code) {
 
   const body = processCSSX(root, styles)
 
-  const { lang, icon, title, description, generator } = { ...globals }
+  const { lang, icon, title, description, generator, transition } = { ...globals }
 
   let html = `<!DOCTYPE html>
 <html lang="${lang}">
@@ -148,8 +149,12 @@ export function transpileCSSX (code) {
     html += `\n<meta name="generator" content="${generator}" />`
   }
 
+  if (transition) {
+    styles.push('@view-transition { navigation: auto; }')
+  }
+
   if (styles.length > 0) {
-    html += '<style>\n' + styles.join('\n') + '</style>'
+    html += `\n<style>\n${styles.join('\n')}</style>`
   }
 
   html += `\n</head>\n${body}\n</html>`
