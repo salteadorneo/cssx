@@ -1,0 +1,178 @@
+:root {
+    --title: "Reference | CSSX - A CSS preprocessor";
+    --description: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+}
+
+head {
+    --import: "../components/head.cssx";
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #e4e4e4;
+    margin: 0;
+    padding: 0;
+
+    --import: "../components/header.cssx";
+
+    main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 16px;
+
+        h2 {
+            --content: "Root variables";
+        }
+
+        p {
+            --content: "Properties that can be used in the :root element.";
+            margin-top: 4px;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 48px;
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--title";
+                }
+
+                span {
+                    --content: "Used to set the title of the document.";
+                }
+            }
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--description";
+                }
+
+                span {
+                    --content: "Used to set the description of the document.";
+                }
+            }
+        }
+
+        h2 {
+            --content: "Reserved variables";
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 48px;
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--content";
+                }
+
+                span {
+                    --content: "Used to set the content of an element.";
+                }
+            }
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--import";
+                }
+
+                span {
+                    --content: "Used to import a CSSX file.";
+                }
+            }
+        }
+
+        h2 {
+            --content: "Properties";
+        }
+
+        p {
+            --content: "Common properties that can be used in any element.";
+            margin-top: 4px;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 48px;
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--href";
+                }
+
+                span {
+                    --content: "Used to set the href attribute of an anchor element.";
+                }
+            }
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--onclick";
+                }
+
+                span {
+                    --content: "Used to set the onclick attribute of an element.";
+                }
+            }
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--target";
+                }
+
+                span {
+                    --content: "Used to set the target attribute of an anchor element.";
+                }
+            }
+
+            div {
+                display: flex;
+                flex-wrap: wrap;
+
+                strong {
+                    flex-basis: 120px;
+                    --content: "--src";
+                }
+
+                span {
+                    --content: "Used to set the src attribute of an image element.";
+                }
+            }
+        }
+    }
+}
