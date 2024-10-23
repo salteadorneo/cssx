@@ -25,26 +25,21 @@ body {
         }
 
         p {
-            --content: "Attributes";
+            --content: "CSSX is a CSS preprocessor that allows you to write HTML and CSS in a single file. It is structured, easy to read and write.";
         }
 
         p {
-            --content: "Property --content is used to set the content of an element.";
+            --content: "CSSX";
+            font-size: 14px;
+            margin: 0 0 1px;
+            padding: .8em;
+            color: white;
+            background: #1e1e1e;
         }
 
         pre {
-            code {
-                --content: "p {\
-    --content: &#34;This is the content of the paragraph&#34;;\
-}";
-            }
-        }
+            margin: 0;
 
-        p {
-            --content: "It may contain other native CSS properties that will remain intact.";
-        }
-
-        pre {
             code {
                 --content: "p {\
     --content: &#34;This is the content of the paragraph&#34;;\
@@ -55,7 +50,33 @@ body {
         }
 
         p {
+            --content: "HTML";
+            font-size: 14px;
+            margin: 0 0 1px;
+            padding: .8em;
+            color: white;
+            background: #1e1e1e;
+        }
+
+        pre {
+            margin: 0;
+
+            code {
+                --content: "&lt;p class=&#34;cssx-cDU0&#34;&gt;This is the content of the paragraph&lt;/p&gt;";
+            }
+        }
+
+        p {
             --content: "Any variable will be passed as a property to the element.";
+        }
+
+        p {
+            --content: "CSSX";
+            font-size: 14px;
+            margin: 0 0 1px;
+            padding: .8em;
+            color: white;
+            background: #1e1e1e;
         }
 
         pre {
@@ -71,12 +92,17 @@ body {
         }
 
         p {
-            --content: "Result";
+            --content: "HTML";
             font-size: 14px;
-            margin: 0;
+            margin: 0 0 1px;
+            padding: .8em;
+            color: white;
+            background: #1e1e1e;
         }
 
         pre {
+            margin: 0;
+
             code {
                 --content: "&lt;button class=&#34;cssx-YnV0dG9u&#34; onclick=&#34;alert(Hello, World!)&#34;&gt;Click me&lt;/button&gt;";
             }
