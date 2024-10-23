@@ -4,7 +4,7 @@
   "description": "Compile CSS as a programming language",
   "author": "salteadorneo",
   "license": "MIT",
-  "homepage": "https://salteadorneo.github.io/cssx/",
+  "homepage": "https://cssx.js.org/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/salteadorneo/cssx.git"
