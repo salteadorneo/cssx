@@ -2,12 +2,9 @@
   "name": "cssx",
   "version": "0.2.5",
   "description": "Compile CSS as a programming language",
-  "type": "module",
-  "main": "index.js",
   "scripts": {
     "dev": "cssx-build --watch --serve",
-    "test": "node --test",
-    "test:watch": "node --test --watch",
+    "start": "cssx-build --serve",
     "build": "cssx-build"
   },
   "keywords": [
@@ -18,14 +15,7 @@
   ],
   "author": "salteadorneo",
   "license": "MIT",
-  "dependencies": {
-    "postcss": "^8.4.47"
-  },
   "devDependencies": {
-    "cssx-build": "*",
-    "standard": "^17.1.0"
-  },
-  "eslintConfig": {
-    "extends": "standard"
+    "cssx-build": "*"
   }
 }
