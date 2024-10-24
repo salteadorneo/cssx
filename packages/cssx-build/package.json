@@ -24,6 +24,13 @@
   "bin": {
     "cssx-build": "cli.js"
   },
+  "files": [
+    "cli.js",
+    "core.js",
+    "index.js",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "build": "node index.js",
     "start": "node cli.js --serve",
