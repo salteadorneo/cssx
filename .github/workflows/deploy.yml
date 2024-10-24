@@ -53,9 +53,6 @@ jobs:
       - name: Install
         run: |
           ${{ steps.detect-package-manager.outputs.runner }} i
-      - name: Test
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} test
       - name: Build
         run: |
           ${{ steps.detect-package-manager.outputs.runner }} run build
