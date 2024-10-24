@@ -1,6 +1,7 @@
 :root {
     --title: "Reference | CSSX - A CSS preprocessor";
     --description: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+    --transition: "true";
 }
 
 head {
@@ -29,37 +30,137 @@ body {
             margin-top: 4px;
         }
 
-        section {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 48px;
+        table {
+            tr {
+                font-size: 14px;
 
-            div {
-                display: flex;
-                flex-wrap: wrap;
-
-                strong {
-                    flex-basis: 120px;
-                    --content: "--title";
+                td {
+                    --content: "Property";
+                    border-bottom: 1px solid #000000;
                 }
 
-                span {
-                    --content: "Used to set the title of the document.";
+                td {
+                    --content: "Description";
+                    border-bottom: 1px solid #000000;
+                }
+
+                td {
+                    --content: "Default";
+                    border-bottom: 1px solid #000000;
                 }
             }
 
-            div {
-                display: flex;
-                flex-wrap: wrap;
+            tr {
+                vertical-align: top;
 
-                strong {
-                    flex-basis: 120px;
-                    --content: "--description";
+                td {
+                    --content: "--lang";
+                    font-weight: 600;
+                    white-space: nowrap;
                 }
 
-                span {
-                    --content: "Used to set the description of the document.";
+                td {
+                    --content: "Language of the document.";
+                }
+
+                td {
+                    --content: "en";
+                    font-style: italic;
+                }
+            }
+
+            tr {
+                vertical-align: top;
+
+                td {
+                    --content: "--title";
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                td {
+                    --content: "Title of the document.";
+                }
+
+                td {
+                    --content: "CSSX";
+                    font-style: italic;
+                }
+            }
+
+            tr {
+                vertical-align: top;
+
+                td {
+                    --content: "--description";
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                td {
+                    --content: "Description of the document.";
+                }
+
+                td {
+                    --content: "CSSX is compiler for CSS.";
+                    font-style: italic;
+                }
+            }
+
+            tr {
+                vertical-align: top;
+
+                td {
+                    --content: "--icon";
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                td {
+                    --content: "Icon of the document.";
+                }
+
+                td {
+                    --content: "favicon.svg";
+                    font-style: italic;
+                }
+            }
+
+            tr {
+                vertical-align: top;
+
+                td {
+                    --content: "--generator";
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                td {
+                    --content: "Generator of the document.";
+                }
+
+                td {
+                    --content: "CSSX v0.0.0";
+                    font-style: italic;
+                }
+            }
+
+            tr {
+                vertical-align: top;
+
+                td {
+                    --content: "--transition";
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                td {
+                    --content: "Activate the view-transition effect.";
+                }
+
+                td {
+                    --content: "false";
+                    font-style: italic;
                 }
             }
         }
@@ -84,7 +185,7 @@ body {
                 }
 
                 span {
-                    --content: "Used to set the content of an element.";
+                    --content: "Set the content of an element.";
                 }
             }
 
@@ -128,7 +229,7 @@ body {
                 }
 
                 span {
-                    --content: "Used to set the href attribute of an anchor element.";
+                    --content: "Set the href attribute of an anchor element.";
                 }
             }
 
@@ -142,7 +243,7 @@ body {
                 }
 
                 span {
-                    --content: "Used to set the onclick attribute of an element.";
+                    --content: "Set the onclick attribute of an element.";
                 }
             }
 
@@ -156,7 +257,7 @@ body {
                 }
 
                 span {
-                    --content: "Used to set the target attribute of an anchor element.";
+                    --content: "Target attribute of an anchor element.";
                 }
             }
 
@@ -170,7 +271,7 @@ body {
                 }
 
                 span {
-                    --content: "Used to set the src attribute of an image element.";
+                    --content: "Set the src attribute of an image element.";
                 }
             }
         }

@@ -1,6 +1,7 @@
 :root {
     --title: "Documentation | CSSX - A CSS preprocessor";
     --description: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+    --transition: "true";
 }
 
 head {
