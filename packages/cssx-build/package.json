@@ -26,7 +26,9 @@
   },
   "scripts": {
     "build": "node index.js",
-    "start": "node cli.js --serve"
+    "start": "node cli.js --serve",
+    "test": "node --test",
+    "test:watch": "node --test --watch"
   },
   "dependencies": {
     "commander": "^12.1.0",
@@ -35,5 +37,11 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "standard": "^17.1.2"
+  },
+  "eslintConfig": {
+    "extends": "standard"
   }
 }
