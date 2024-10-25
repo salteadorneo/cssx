@@ -1,22 +1,18 @@
-div {
-    margin-top: 32px;
-
-    p {
-        strong {
-            --content: "Notice";
-        }
-    }
-
-    p {
-        --content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
+p {
+    strong {
+        content: "Notice";
     }
 }
 
+p {
+    content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
+}
+
 a {
-    --href: "https://github.com/salteadorneo/cssx";
+    --href: "https://www.npmjs.com/package/cssx-build";
     --target: "_blank";
 
     img {
-        --src: "https://img.shields.io/github/package-json/v/salteadorneo/cssx";
+        --src: "https://img.shields.io/npm/v/cssx-build";
     }
 }

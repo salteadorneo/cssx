@@ -22,19 +22,19 @@ body {
         padding: 16px;
 
         h2 {
-            --content: "Introduction";
+            content: "Introduction";
         }
 
         p {
-            --content: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
+            content: "CSSX is compiler for CSS. Generate HTML and CSS from a single file. Structured, easy to read and write.";
         }
 
         h2 {
-            --content: "Example";
+            content: "Example";
         }
 
         p {
-            --content: "The button below is styled with CSSX and has a custom touch-action property that triggers a confetti effect when clicked.";
+            content: "The button below is styled with CSSX and has a custom touch-action property that triggers a confetti effect when clicked.";
         }
 
         section {
@@ -45,7 +45,7 @@ body {
                 background: #ffffff;
 
                 button {
-                    --content: "Click me!";
+                    content: "Click me!";
                     --onclick: "confetti()";
                     padding: 10px 16px;
                     border: none;
@@ -61,39 +61,42 @@ body {
         }
 
         p {
-            --content: "This page is generated from a single CSSX file. View the ";
+            content: "This page is generated from a single CSSX file. View the ";
 
             a {
-                --content: "source code in the GitHub repository";
+                content: "source code in the GitHub repository";
                 --target: "_blank";
                 --href: "https://github.com/salteadorneo/cssx/blob/main/src/index.cssx";
             }
         }
 
         h2 {
-            --content: "Usage";
+            content: "Usage";
+        }
+
+        pre {
+            code {
+                content: "npx cssx-build";
+            }
         }
 
         p {
-            --content: "Download the repository and run the following command to compile the CSSX files from the src directory to the dist directory.";
-        }
-
-        div {
-            --import: "../components/install.cssx";
+            content: "This will compile the CSSX files from the **src/pages** directory to the **dist** directory.";
         }
 
         h2 {
-            --content: "Sponsors";
+            content: "Sponsors";
         }
 
         p {
-            --content: "Really? You want to sponsor this project? 😂";
+            content: "Really? You want to sponsor this project? 😂";
         }
     }
 
     footer {
         max-width: 600px;
         margin: 0 auto;
+        padding: 16px;
 
         --import: "../components/footer.cssx";
     }

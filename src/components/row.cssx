@@ -1,0 +1,17 @@
+td {
+    content: var(--property);
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 6px;
+}
+
+td {
+    content: var(--description);
+    padding: 6px;
+}
+
+td {
+    content: var(--default);
+    font-style: italic;
+    padding: 6px;
+}

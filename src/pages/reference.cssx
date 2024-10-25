@@ -22,11 +22,11 @@ body {
         padding: 16px;
 
         h2 {
-            --content: "Root variables";
+            content: "Root variables";
         }
 
         p {
-            --content: "Properties that can be used in the :root element.";
+            content: "Properties that can be used in the :root element.";
             margin-top: 4px;
         }
 
@@ -35,138 +35,81 @@ body {
                 font-size: 14px;
 
                 td {
-                    --content: "Property";
+                    content: "Property";
                     border-bottom: 1px solid #000000;
+                    padding: 6px;
                 }
 
                 td {
-                    --content: "Description";
+                    content: "Description";
                     border-bottom: 1px solid #000000;
+                    padding: 6px;
                 }
 
                 td {
-                    --content: "Default";
+                    content: "Default";
                     border-bottom: 1px solid #000000;
+                    padding: 6px;
                 }
             }
 
             tr {
+                --property: "--lang";
+                --description: "Language of the document";
+                --default: "en";
                 vertical-align: top;
 
-                td {
-                    --content: "--lang";
-                    font-weight: 600;
-                    white-space: nowrap;
-                }
-
-                td {
-                    --content: "Language of the document.";
-                }
-
-                td {
-                    --content: "en";
-                    font-style: italic;
-                }
+                --import: "../components/row.cssx";
             }
 
             tr {
+                --property: "--title";
+                --description: "Title of the document";
+                --default: "CSSX";
                 vertical-align: top;
 
-                td {
-                    --content: "--title";
-                    font-weight: 600;
-                    white-space: nowrap;
-                }
-
-                td {
-                    --content: "Title of the document.";
-                }
-
-                td {
-                    --content: "CSSX";
-                    font-style: italic;
-                }
+                --import: "../components/row.cssx";
             }
 
             tr {
+                --property: "--description";
+                --description: "Description of the document";
+                --default: "CSSX is compiler for CSS";
                 vertical-align: top;
 
-                td {
-                    --content: "--description";
-                    font-weight: 600;
-                    white-space: nowrap;
-                }
-
-                td {
-                    --content: "Description of the document.";
-                }
-
-                td {
-                    --content: "CSSX is compiler for CSS.";
-                    font-style: italic;
-                }
+                --import: "../components/row.cssx";
             }
 
             tr {
+                --property: "--icon";
+                --description: "Link to the favicon";
+                --default: "favicon.svg";
                 vertical-align: top;
 
-                td {
-                    --content: "--icon";
-                    font-weight: 600;
-                    white-space: nowrap;
-                }
-
-                td {
-                    --content: "Icon of the document.";
-                }
-
-                td {
-                    --content: "favicon.svg";
-                    font-style: italic;
-                }
+                --import: "../components/row.cssx";
             }
 
             tr {
+                --property: "--generator";
+                --description: "Meta generator";
+                --default: "CSSX v0.0.0";
                 vertical-align: top;
 
-                td {
-                    --content: "--generator";
-                    font-weight: 600;
-                    white-space: nowrap;
-                }
-
-                td {
-                    --content: "Generator of the document.";
-                }
-
-                td {
-                    --content: "CSSX v0.0.0";
-                    font-style: italic;
-                }
+                --import: "../components/row.cssx";
             }
 
             tr {
+                --property: "--transition";
+                --description: "Add @view-transition";
+                --default: "false";
                 vertical-align: top;
 
-                td {
-                    --content: "--transition";
-                    font-weight: 600;
-                    white-space: nowrap;
-                }
-
-                td {
-                    --content: "Activate the view-transition effect.";
-                }
-
-                td {
-                    --content: "false";
-                    font-style: italic;
-                }
+                --import: "../components/row.cssx";
             }
         }
 
         h2 {
-            --content: "Reserved variables";
+            content: "Reserved variables";
         }
 
         section {
@@ -181,11 +124,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    --content: "--content";
+                    content: "content";
                 }
 
                 span {
-                    --content: "Set the content of an element.";
+                    content: "Set the content of an element.";
                 }
             }
 
@@ -195,21 +138,21 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    --content: "--import";
+                    content: "--import";
                 }
 
                 span {
-                    --content: "Used to import a CSSX file.";
+                    content: "Used to import a CSSX file.";
                 }
             }
         }
 
         h2 {
-            --content: "Properties";
+            content: "Properties";
         }
 
         p {
-            --content: "Common properties that can be used in any element.";
+            content: "Common properties that can be used in any element.";
             margin-top: 4px;
         }
 
@@ -225,11 +168,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    --content: "--href";
+                    content: "--href";
                 }
 
                 span {
-                    --content: "Set the href attribute of an anchor element.";
+                    content: "Set the href attribute of an anchor element.";
                 }
             }
 
@@ -239,11 +182,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    --content: "--onclick";
+                    content: "--onclick";
                 }
 
                 span {
-                    --content: "Set the onclick attribute of an element.";
+                    content: "Set the onclick attribute of an element.";
                 }
             }
 
@@ -253,11 +196,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    --content: "--target";
+                    content: "--target";
                 }
 
                 span {
-                    --content: "Target attribute of an anchor element.";
+                    content: "Target attribute of an anchor element.";
                 }
             }
 
@@ -267,11 +210,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    --content: "--src";
+                    content: "--src";
                 }
 
                 span {
-                    --content: "Set the src attribute of an image element.";
+                    content: "Set the src attribute of an image element.";
                 }
             }
         }
@@ -280,6 +223,7 @@ body {
     footer {
         max-width: 600px;
         margin: 0 auto;
+        padding: 16px;
 
         --import: "../components/footer.cssx";
     }

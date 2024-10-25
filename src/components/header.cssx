@@ -12,12 +12,12 @@ header {
 
         a {
             --href: "/";
-            --content: "css";
+            content: "css";
             color: #000000;
             text-decoration: none;
 
             span {
-                --content: "x";
+                content: "x";
                 color: #007bff;
             }
         }
@@ -29,7 +29,7 @@ header {
         gap: 16px;
 
         a {
-            --content: "Docs";
+            content: "Docs";
             --href: "docs.html";
             color: #000000;
             font-weight: 500;
@@ -37,7 +37,7 @@ header {
         }
 
         a {
-            --content: "Reference";
+            content: "Reference";
             --href: "reference.html";
             color: #000000;
             font-weight: 500;
@@ -61,7 +61,7 @@ header {
             }
 
             span {
-                --content: "GitHub";
+                content: "GitHub";
                 color: #000000;
                 font-weight: 500;
             }
