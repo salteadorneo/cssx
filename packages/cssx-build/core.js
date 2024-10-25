@@ -2,6 +2,16 @@ import { readFileSync } from 'fs'
 import { join, extname } from 'path'
 
 import postcss from 'postcss'
+import cssvariables from 'postcss-css-variables'
+
+import MarkdownIt from 'markdown-it'
+const md = new MarkdownIt({
+  html: true,
+  breaks: true,
+  xhtmlOut: true
+})
+md.renderer.rules.paragraph_open = () => ''
+md.renderer.rules.paragraph_close = () => ''
 
 const packageJSON = JSON.parse(readFileSync('./package.json'))
 const { version } = packageJSON
@@ -19,12 +29,12 @@ function generateHash (selector) {
   return btoa(selector).replace(/=/g, '').substring(0, 8)
 }
 
-function processCSSX (node, styles = []) {
+function processCSSX (node, styles = [], variables = {}) {
   let body = ''
 
   if (node.type === 'root') {
     node.nodes.forEach(childNode => {
-      body += processCSSX(childNode, styles)
+      body += processCSSX(childNode, styles, variables)
     })
   } else if (node.type === 'rule') {
     if (node.selector === ':root') {
@@ -45,6 +55,8 @@ function processCSSX (node, styles = []) {
     let bodyImport = ''
     const subelementStyles = {}
 
+    const elementVars = { ...variables }
+
     let exit = false
     node.walkDecls(decl => {
       if (exit) return
@@ -55,8 +67,8 @@ function processCSSX (node, styles = []) {
               const importFile = decl.value.replace(/['"]/g, '')
               const importContent = readFileSync(join(process.cwd(), 'src/pages', importFile), 'utf8')
               if (extname(importFile) === '.cssx') {
-                const importRoot = postcss.parse(importContent)
-                bodyImport = processCSSX(importRoot, styles)
+                const importRoot = postcss.parse(processCSS(importContent))
+                bodyImport = processCSSX(importRoot, styles, elementVars)
               } else {
                 bodyImport = importContent
               }
@@ -64,13 +76,21 @@ function processCSSX (node, styles = []) {
               console.error(`Error: ${err.message}`)
             }
           } else {
-            props[decl.prop.replace('--', '')] = decl.value.replace(/['"]/g, '')
+            elementVars[decl.prop] = decl.value
+            props[decl.prop.replace('--', '')] = decl.value.replace(/^["']|["']$/g, '')
           }
         } else {
           if (decl.parent.selector.startsWith('&')) {
             const adjustedSelector = decl.parent.selector
             subelementStyles[adjustedSelector] = (subelementStyles[adjustedSelector] || '') + `${decl.prop}: ${decl.value};`
           } else {
+            if (decl.prop === 'content') {
+              const value = decl.value.replace(/var\((--\w+)\)/g, (_, key) => {
+                return elementVars[key] || decl.value
+              })
+              props[decl.prop] = elementTag !== 'code' ? md.render(value.replace(/^["']|["']$/g, '')) : value.replace(/^["']|["']$/g, '')
+              return
+            }
             elementStyles += `${decl.prop}: ${decl.value};\n`
           }
         }
@@ -116,7 +136,7 @@ function processCSSX (node, styles = []) {
     body += props.content || ''
 
     node.nodes.forEach(childNode => {
-      body += processCSSX(childNode, styles)
+      body += processCSSX(childNode, styles, variables)
     })
 
     if (!elementTag.startsWith('&')) {
@@ -128,11 +148,11 @@ function processCSSX (node, styles = []) {
 }
 
 export function transpileCSSX (code) {
-  const root = postcss.parse(code)
+  const root = postcss.parse(processCSS(code))
 
   const styles = []
 
-  const body = processCSSX(root, styles)
+  let body = processCSSX(root, styles)
 
   const { lang, icon, title, description, generator, transition } = { ...globals }
 
@@ -157,7 +177,20 @@ export function transpileCSSX (code) {
     html += `\n<style>\n${styles.join('\n')}</style>`
   }
 
+  if (!body.startsWith('<body>')) {
+    body = `<body>${body}</body>`
+  }
+
   html += `\n</head>\n${body}\n</html>`
 
   return html
+}
+
+function processCSS (code) {
+  return postcss([
+    cssvariables({
+      preserve: true,
+      preserveAtRulesOrder: true
+    })
+  ]).process(code).css
 }

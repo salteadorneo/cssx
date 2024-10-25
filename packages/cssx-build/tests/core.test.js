@@ -1,5 +1,5 @@
 import test from 'node:test'
-import { strictEqual } from 'node:assert/strict'
+import assert from 'node:assert/strict'
 
 import postcss from 'postcss'
 
@@ -10,7 +10,7 @@ test('default', () => {
 
   const { lang, title, description, generator } = { ...globals }
 
-  strictEqual(result, `<!DOCTYPE html>
+  assert.strictEqual(result, `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
 <meta charset="UTF-8" />
@@ -20,7 +20,7 @@ test('default', () => {
 <meta name="description" content="${description}" />
 <meta name="generator" content="${generator}" />
 </head>
-
+<body></body>
 </html>`)
 })
 
@@ -33,7 +33,7 @@ test('get vars root', () => {
       --generator: "";
     }
   `)
-  strictEqual(result, `<!DOCTYPE html>
+  assert.strictEqual(result, `<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -42,7 +42,7 @@ test('get vars root', () => {
 <title>Demo title</title>
 <meta name="description" content="Demo description" />
 </head>
-
+<body></body>
 </html>`)
 })
 
@@ -54,9 +54,9 @@ test('get basic body style', () => {
   `)
   const style = result.match(/<style>(.*)<\/style>/s)[1]
   postcss.parse(style).nodes.forEach(node => {
-    strictEqual(node.selector.split('.')[0], 'body')
-    strictEqual(node.nodes[0].prop, 'font-size')
-    strictEqual(node.nodes[0].value, '16px')
+    assert.strictEqual(node.selector.split('.')[0], 'body')
+    assert.strictEqual(node.nodes[0].prop, 'font-size')
+    assert.strictEqual(node.nodes[0].value, '16px')
   })
 })
 
@@ -73,11 +73,45 @@ test('get basic nested', () => {
   const style = result.match(/<style>(.*)<\/style>/s)[1]
   const nodes = postcss.parse(style).nodes
 
-  strictEqual(nodes[0].selector.split('.')[0], 'body')
-  strictEqual(nodes[0].nodes[0].prop, 'font-size')
-  strictEqual(nodes[0].nodes[0].value, '16px')
+  assert.strictEqual(nodes[0].selector.split('.')[0], 'body')
+  assert.strictEqual(nodes[0].nodes[0].prop, 'font-size')
+  assert.strictEqual(nodes[0].nodes[0].value, '16px')
 
-  strictEqual(nodes[1].selector.split('.')[0], 'h1')
-  strictEqual(nodes[1].nodes[0].prop, 'font-size')
-  strictEqual(nodes[1].nodes[0].value, '32px')
+  assert.strictEqual(nodes[1].selector.split('.')[0], 'h1')
+  assert.strictEqual(nodes[1].nodes[0].prop, 'font-size')
+  assert.strictEqual(nodes[1].nodes[0].value, '32px')
+})
+
+test('get basic vars', () => {
+  const result = transpileCSSX(`
+    h1 {
+      --text: "Demo title";
+      content: var(--text);
+    }
+  `)
+  const h1 = result.match(/<h1(?:\s[^>]*)?>(.*?)<\/h1>/s)[1].trim()
+  assert.strictEqual(h1, 'Demo title')
+})
+
+test('get basic vars nested', () => {
+  const result = transpileCSSX(`
+    p {
+      --text: "Text";
+      content: var(--text);
+
+      a {
+        --value: "Link";
+        content: var(--value);
+        --href: "https://example.com";
+      }
+    }
+  `)
+  const p = result.match(/<p(?:\s[^>]*)?>(.*?)<\/p>/s)[1].trim()
+  assert.match(p, /Text/)
+
+  const a = result.match(/<a(?:\s[^>]*)?>(.*?)<\/a>/s)[1].trim()
+  assert.strictEqual(a, 'Link')
+
+  const href = result.match(/<a(?:\s[^>]*)? href="(.*?)"/s)[1].trim()
+  assert.strictEqual(href, 'https://example.com')
 })
