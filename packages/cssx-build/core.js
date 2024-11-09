@@ -49,7 +49,6 @@ function processCSSX (node, styles = [], variables = {}) {
     const props = {}
 
     const className = `cssx-${generateHash(elementTag + node.source?.start.line)}`
-    props.class = className
 
     let elementStyles = ''
     let bodyImport = ''
@@ -75,6 +74,11 @@ function processCSSX (node, styles = [], variables = {}) {
             } catch (err) {
               console.error(`Error: ${err.message}`)
             }
+          } else if (decl.prop === '--content') {
+            const value = decl.value.replace(/var\((--\w+)\)/g, (_, key) => {
+              return elementVars[key] || decl.value
+            })
+            props.content = elementTag !== 'code' ? md.render(value.replace(/^["']|["']$/g, '')) : value.replace(/^["']|["']$/g, '')
           } else {
             elementVars[decl.prop] = decl.value
             props[decl.prop.replace('--', '')] = decl.value.replace(/^["']|["']$/g, '')
@@ -84,13 +88,6 @@ function processCSSX (node, styles = [], variables = {}) {
             const adjustedSelector = decl.parent.selector
             subelementStyles[adjustedSelector] = (subelementStyles[adjustedSelector] || '') + `${decl.prop}: ${decl.value};`
           } else {
-            if (decl.prop === 'content') {
-              const value = decl.value.replace(/var\((--\w+)\)/g, (_, key) => {
-                return elementVars[key] || decl.value
-              })
-              props[decl.prop] = elementTag !== 'code' ? md.render(value.replace(/^["']|["']$/g, '')) : value.replace(/^["']|["']$/g, '')
-              return
-            }
             elementStyles += `${decl.prop}: ${decl.value};\n`
           }
         }
@@ -107,9 +104,11 @@ function processCSSX (node, styles = [], variables = {}) {
       styles.push(`${elementTag}.${className} {\n${elementStyles}${substyles}}`)
     }
 
+    props.class = `${className} ${props.class ?? ''}`.trim()
+
     const propsParser = (props) => {
       return Object.keys(props).reduce((acc, key) => {
-        if (key === 'content') {
+        if (key === '--content') {
           return acc
         }
         return `${acc} ${key}="${props[key]}"`
