@@ -8,5 +8,5 @@ script {
 }
 
 script {
-    content: "hljs.highlightAll()"
+    --content: "hljs.highlightAll()"
 }

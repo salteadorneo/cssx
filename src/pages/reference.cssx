@@ -13,7 +13,6 @@ body {
     background-color: #e4e4e4;
     margin: 0;
     padding: 0;
-
     --import: "../components/header.cssx";
 
     main {
@@ -22,11 +21,11 @@ body {
         padding: 16px;
 
         h2 {
-            content: "Root variables";
+            --content: "Root variables";
         }
 
         p {
-            content: "Properties that can be used in the :root element.";
+            --content: "Properties that can be used in the :root element.";
             margin-top: 4px;
         }
 
@@ -35,19 +34,19 @@ body {
                 font-size: 14px;
 
                 td {
-                    content: "Property";
+                    --content: "Property";
                     border-bottom: 1px solid #000000;
                     padding: 6px;
                 }
 
                 td {
-                    content: "Description";
+                    --content: "Description";
                     border-bottom: 1px solid #000000;
                     padding: 6px;
                 }
 
                 td {
-                    content: "Default";
+                    --content: "Default";
                     border-bottom: 1px solid #000000;
                     padding: 6px;
                 }
@@ -94,7 +93,6 @@ body {
                 --description: "Meta generator";
                 --default: "CSSX v0.0.0";
                 vertical-align: top;
-
                 --import: "../components/row.cssx";
             }
 
@@ -103,13 +101,12 @@ body {
                 --description: "Add @view-transition";
                 --default: "false";
                 vertical-align: top;
-
                 --import: "../components/row.cssx";
             }
         }
 
         h2 {
-            content: "Reserved variables";
+            --content: "Reserved variables";
         }
 
         section {
@@ -124,11 +121,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    content: "content";
+                    --content: "--content";
                 }
 
                 span {
-                    content: "Set the content of an element.";
+                    --content: "Set the content of an element.";
                 }
             }
 
@@ -138,21 +135,21 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    content: "--import";
+                    --content: "--import";
                 }
 
                 span {
-                    content: "Used to import a CSSX file.";
+                    --content: "Used to import a CSSX file.";
                 }
             }
         }
 
         h2 {
-            content: "Properties";
+            --content: "Properties";
         }
 
         p {
-            content: "Common properties that can be used in any element.";
+            --content: "Common properties that can be used in any element.";
             margin-top: 4px;
         }
 
@@ -168,11 +165,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    content: "--href";
+                    --content: "--href";
                 }
 
                 span {
-                    content: "Set the href attribute of an anchor element.";
+                    --content: "Set the href attribute of an anchor element.";
                 }
             }
 
@@ -182,11 +179,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    content: "--onclick";
+                    --content: "--onclick";
                 }
 
                 span {
-                    content: "Set the onclick attribute of an element.";
+                    --content: "Set the onclick attribute of an element.";
                 }
             }
 
@@ -196,11 +193,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    content: "--target";
+                    --content: "--target";
                 }
 
                 span {
-                    content: "Target attribute of an anchor element.";
+                    --content: "Target attribute of an anchor element.";
                 }
             }
 
@@ -210,11 +207,11 @@ body {
 
                 strong {
                     flex-basis: 120px;
-                    content: "--src";
+                    --content: "--src";
                 }
 
                 span {
-                    content: "Set the src attribute of an image element.";
+                    --content: "Set the src attribute of an image element.";
                 }
             }
         }
@@ -224,7 +221,6 @@ body {
         max-width: 600px;
         margin: 0 auto;
         padding: 16px;
-
         --import: "../components/footer.cssx";
     }
 }

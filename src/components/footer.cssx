@@ -1,11 +1,11 @@
 p {
     strong {
-        content: "Notice";
+        --content: "Notice";
     }
 }
 
 p {
-    content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
+    --content: "This version is experimental and is not recommended for production environments. Besides, this is all a joke that has gotten out of hand. Please, don't use it.";
 }
 
 a {

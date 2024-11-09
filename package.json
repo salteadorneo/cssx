@@ -16,6 +16,6 @@
   "author": "salteadorneo",
   "license": "MIT",
   "devDependencies": {
-    "cssx-build": "^0.1.0"
+    "cssx-build": "^0.2.0"
   }
 }
